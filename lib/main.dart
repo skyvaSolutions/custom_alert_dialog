@@ -17,6 +17,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<UiController>(create: (context) => UiController()),
       ],
       child: MaterialApp(
+        theme: ThemeData(
+          colorScheme: ThemeData().colorScheme.copyWith(
+            primary: Color(0xff2B3A67),
+            secondary: Color(0xff2B3A67),
+          ),
+        ),
         home: Scaffold(
           appBar: AppBar(
             title: Text('Custom Dialog'),

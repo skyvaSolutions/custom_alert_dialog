@@ -403,13 +403,11 @@ class SizeAndColors extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           content: SingleChildScrollView(
-            child: ColorPicker(
+            child: BlockPicker(
               pickerColor: colorPicked,
               onColorChanged: (Color color) {
                 changeColor(context, selected, color);
               },
-              showLabel: true,
-              pickerAreaHeightPercent: 0.5,
             ),
           ),
           actions: [
@@ -686,7 +684,7 @@ class ContactUs extends StatelessWidget {
         FormBuilderCheckbox(
           name: 'Email Enabled',
           title: Text(
-            'Email Enabled',
+            'Add Email us button',
             style: TextStyle(
               fontSize: 15.0,
               color: colorPrimary,
@@ -712,7 +710,7 @@ class ContactUs extends StatelessWidget {
         FormBuilderCheckbox(
           name: 'Number Enabled',
           title: Text(
-            'Number Enabled',
+            'Add Call us button',
             style: TextStyle(
               fontSize: 15.0,
               color: colorPrimary,
@@ -742,7 +740,7 @@ class ContactUs extends StatelessWidget {
         FormBuilderCheckbox(
           name: 'More Info Enabled',
           title: Text(
-            'More Information',
+            'Add More Information link',
             style: TextStyle(
               fontSize: 15.0,
               color: colorPrimary,

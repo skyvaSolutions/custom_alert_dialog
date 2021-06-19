@@ -279,7 +279,7 @@ class CustomDialog extends StatelessWidget {
                                     width: 10.0,
                                   ),
                                   Text(
-                                    'Email',
+                                    'Email Us',
                                     style: TextStyle(
                                       fontSize: bodyFontSize,
                                       color: bodyColor,
@@ -305,7 +305,7 @@ class CustomDialog extends StatelessWidget {
                                     width: 10.0,
                                   ),
                                   Text(
-                                    'Call',
+                                    'Call Us',
                                     style: TextStyle(
                                       fontSize: bodyFontSize,
                                       color: bodyColor,

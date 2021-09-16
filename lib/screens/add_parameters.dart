@@ -14,12 +14,12 @@ import 'package:custom_dialog/controller/ui_controller.dart';
 final _formKey = GlobalKey<FormBuilderState>();
 
 //Color Scheme of the app
-Color colorPrimary = Color(0xff2B3A67);
-Color colorSecondary = Color(0xffD4DAED);
-Color colorButton = Color(0xffD4DAED);
+Color colorPrimary = Colors.grey.shade800;
+Color colorSecondary = Color(0xFF3CD1BB);
+Color colorButton = Color(0xFF3CD1BB);
 
 
-//This is the defailt decoration for all the text fields
+//This is the default decoration for all the text fields
 InputDecoration CustomInputDecoration(String label, IconData prefixIcon) {
   return InputDecoration(
     prefixIcon: Icon(prefixIcon),

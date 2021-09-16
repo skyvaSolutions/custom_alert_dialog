@@ -19,14 +19,14 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
           colorScheme: ThemeData().colorScheme.copyWith(
-            primary: Color(0xff2B3A67),
-            secondary: Color(0xff2B3A67),
+            primary: Color(0xFF3CD1BB),
+            secondary: Color(0xFF4C44B3),
           ),
         ),
         home: Scaffold(
           appBar: AppBar(
             title: Text('Custom Dialog'),
-            backgroundColor: Color(0xff2B3A67),
+            backgroundColor: Color(0xFF3CD1BB),
           ),
           body: AddParameters(),
         ),

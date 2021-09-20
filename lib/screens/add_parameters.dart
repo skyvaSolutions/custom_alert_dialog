@@ -1,3 +1,4 @@
+import 'package:custom_dialog/main.dart';
 import 'package:custom_dialog/screens/custom_dialog_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -7,20 +8,15 @@ import 'package:provider/provider.dart';
 import 'package:custom_dialog/controller/form_content.dart';
 import 'package:custom_dialog/controller/ui_controller.dart';
 
-
 //Mostly all the widgets have been separated into separate widget tree so that it is easy for further changes
-
-//_formKey is the variable that populates all the values of the form in Map datatype
-final _formKey = GlobalKey<FormBuilderState>();
 
 //Color Scheme of the app
 Color colorPrimary = Colors.grey.shade800;
 Color colorSecondary = Color(0xFF3CD1BB);
 Color colorButton = Color(0xFF3CD1BB);
 
-
 //This is the default decoration for all the text fields
-InputDecoration CustomInputDecoration(String label, IconData prefixIcon) {
+InputDecoration customInputDecoration(String label, IconData prefixIcon) {
   return InputDecoration(
     prefixIcon: Icon(prefixIcon),
     hintText: label,
@@ -45,7 +41,7 @@ InputDecoration CustomInputDecoration(String label, IconData prefixIcon) {
 }
 
 //Custom Button style
-ButtonStyle CustomButtonStyle() {
+ButtonStyle customButtonStyle() {
   return ButtonStyle(
     backgroundColor: MaterialStateProperty.all(colorButton),
     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -56,15 +52,18 @@ ButtonStyle CustomButtonStyle() {
   );
 }
 
-
 //Main class of this file which renders the over all widget tree on the screen
 class AddParameters extends StatelessWidget {
+  //_formKey is the variable that populates all the values of the form in Map datatype
+  static final formKey = GlobalKey<FormBuilderState>();
+
   @override
   Widget build(BuildContext context) {
+    print('Add parameters build called');
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SubmitButton(),
+        child: PreviewButton(),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -82,7 +81,7 @@ class AddParameters extends StatelessWidget {
               ),
             ),
             FormBuilder(
-              key: _formKey,
+              key: formKey,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -93,9 +92,13 @@ class AddParameters extends StatelessWidget {
                     SizedBox(
                       height: 10.0,
                     ),
-                    if (context.watch<UiController>().advButton)
+                    if (context
+                        .watch<UiController>()
+                        .advButton)
                       AdvanceSettingsButton(),
-                    if (context.watch<UiController>().showAdvancedSettings)
+                    if (context
+                        .watch<UiController>()
+                        .showAdvancedSettings)
                       AdvancedSettings(),
                   ],
                 ),
@@ -109,28 +112,29 @@ class AddParameters extends StatelessWidget {
 }
 
 //Submit button Custom Layout
-class SubmitButton extends StatelessWidget {
+class PreviewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        if (_formKey.currentState!.saveAndValidate()) {
-          print(_formKey.currentState!.value);
+        if (AddParameters.formKey.currentState!.saveAndValidate()) {
+          print(AddParameters.formKey.currentState!.value);
           context
               .read<FormContent>()
-              .contentChange(_formKey.currentState!.value);
+              .contentChange(AddParameters.formKey.currentState!.value);
           showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CustomDialog();
-              });
+            context: context,
+            builder: (BuildContext context) {
+              return CustomDialog();
+            },
+          );
         }
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(colorPrimary),
       ),
       child: Text(
-        'Submit',
+        'Preview',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20.0,
@@ -213,22 +217,29 @@ class AdvancedSettings extends StatelessWidget {
   }
 }
 
-
 //Title,header,bullets,footer
 class DialogContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('DialogContent build called');
+    print(MyApp.customDialogStructure);
+    if (MyApp.customDialogStructure != null) {
+      print(MyApp.customDialogStructure.title);
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FormBuilderTextField(
-            name: 'Title',
+            name: 'title',
+            initialValue: MyApp.customDialogStructure == null
+                ? ""
+                : MyApp.customDialogStructure.title,
             autofocus: true,
             cursorColor: colorPrimary,
             style: TextStyle(fontSize: 15.0),
-            decoration: CustomInputDecoration('Add Title', Icons.title),
+            decoration: customInputDecoration('Add Title', Icons.title),
             validator: FormBuilderValidators.compose([
               FormBuilderValidators.required(context,
                   errorText: 'Title cannot be empty'),
@@ -241,11 +252,14 @@ class DialogContent extends StatelessWidget {
             height: 10.0,
           ),
           FormBuilderTextField(
-            name: 'Header',
+            name: 'headerText',
             style: TextStyle(fontSize: 15.0),
+            initialValue: MyApp.customDialogStructure == null
+                ? ""
+                : MyApp.customDialogStructure.headerText,
             cursorColor: colorPrimary,
             decoration:
-                CustomInputDecoration('Add Header', Icons.article_sharp),
+            customInputDecoration('Add Header', Icons.article_sharp),
             keyboardType: TextInputType.text,
             validator: FormBuilderValidators.compose([
               FormBuilderValidators.required(context,
@@ -258,9 +272,12 @@ class DialogContent extends StatelessWidget {
             height: 10.0,
           ),
           FormBuilderTextField(
-            name: 'Bullets',
+            name: 'centerBulletText',
+            initialValue: MyApp.customDialogStructure == null
+                ? ""
+                : MyApp.customDialogStructure.centerBulletText,
             cursorColor: colorPrimary,
-            decoration: CustomInputDecoration(
+            decoration: customInputDecoration(
                 'Add multiline Bullets', Icons.format_list_bulleted),
             keyboardType: TextInputType.multiline,
             minLines: 1,
@@ -270,10 +287,13 @@ class DialogContent extends StatelessWidget {
             height: 10.0,
           ),
           FormBuilderTextField(
-            name: 'Footer',
+            name: 'footerText',
+            initialValue: MyApp.customDialogStructure == null
+                ? ""
+                : MyApp.customDialogStructure.footerText,
             cursorColor: colorPrimary,
             style: TextStyle(fontSize: 15.0),
-            decoration: CustomInputDecoration(
+            decoration: customInputDecoration(
                 'Add Footer', Icons.branding_watermark_outlined),
             keyboardType: TextInputType.text,
             validator: FormBuilderValidators.compose([
@@ -289,8 +309,8 @@ class DialogContent extends StatelessWidget {
   }
 }
 
-
 //bullet icons
+// ignore: must_be_immutable
 class BulletIconField extends StatelessWidget {
   List<IconData> icons = [
     Icons.circle,
@@ -305,7 +325,10 @@ class BulletIconField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormBuilderField(
-      name: "Bullet Icon",
+      name: "bulletSymbol",
+      initialValue: MyApp.customDialogStructure == null
+          ? ""
+          : MyApp.customDialogStructure.bulletSymbol,
       builder: (FormFieldState<dynamic> field) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -320,54 +343,59 @@ class BulletIconField extends StatelessWidget {
             SizedBox(
               height: 10.0,
             ),
-            ToggleButtons(
-              isSelected: context.watch<UiController>().bulletSelected,
-              selectedBorderColor: colorPrimary,
-              fillColor: colorButton,
-              borderRadius: BorderRadius.circular(50.0),
-              borderColor: colorPrimary,
-              borderWidth: 1.5,
-              onPressed: (int index) {
-                context.read<UiController>().changeBulletSelected(index);
-                _formKey.currentState!.fields['Bullet Icon']!
-                    .didChange(icons[index]);
-              },
-              children: [
-                Icon(
-                  Icons.circle,
-                  color: colorPrimary,
-                  size: 18.0,
-                ),
-                Icon(
-                  Icons.trip_origin,
-                  color: colorPrimary,
-                  size: 18.0,
-                ),
-                Icon(
-                  Icons.format_list_numbered,
-                  color: colorPrimary,
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: colorPrimary,
-                  size: 15.0,
-                ),
-                Icon(
-                  Icons.star_outlined,
-                  color: colorPrimary,
-                  size: 20.0,
-                ),
-                Icon(
-                  Icons.stop,
-                  color: colorPrimary,
-                  size: 22.0,
-                ),
-                Icon(
-                  Icons.block,
-                  color: colorPrimary,
-                  size: 22.0,
-                ),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ToggleButtons(
+                isSelected: context
+                    .watch<UiController>()
+                    .bulletSelected,
+                selectedBorderColor: colorPrimary,
+                fillColor: colorButton,
+                borderRadius: BorderRadius.circular(5.0),
+                borderColor: colorPrimary,
+                borderWidth: 1.5,
+                onPressed: (int index) {
+                  context.read<UiController>().changeBulletSelected(index);
+                  AddParameters.formKey.currentState!.fields['bulletSymbol']!
+                      .didChange(icons[index]);
+                },
+                children: [
+                  Icon(
+                    Icons.circle,
+                    color: colorPrimary,
+                    size: 18.0,
+                  ),
+                  Icon(
+                    Icons.trip_origin,
+                    color: colorPrimary,
+                    size: 18.0,
+                  ),
+                  Icon(
+                    Icons.format_list_numbered,
+                    color: colorPrimary,
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: colorPrimary,
+                    size: 15.0,
+                  ),
+                  Icon(
+                    Icons.star_outlined,
+                    color: colorPrimary,
+                    size: 20.0,
+                  ),
+                  Icon(
+                    Icons.stop,
+                    color: colorPrimary,
+                    size: 22.0,
+                  ),
+                  Icon(
+                    Icons.block,
+                    color: colorPrimary,
+                    size: 22.0,
+                  ),
+                ],
+              ),
             ),
             SizedBox(
               height: 10.0,
@@ -379,20 +407,20 @@ class BulletIconField extends StatelessWidget {
   }
 }
 
-
 //title font size, body font size, title, background and body color
 class SizeAndColors extends StatelessWidget {
+  static var bgColor, titleColor, msgColor;
+
   void changeColor(BuildContext context, String selected, Color color) {
-    print('Color changed');
     if (selected == 'bgColor') {
       context.read<UiController>().changeBgColor(color);
-      _formKey.currentState!.fields['Background Color']!.didChange(color);
+      bgColor = color.value;
     } else if (selected == 'titleColor') {
       context.read<UiController>().changeTitleColor(color);
-      _formKey.currentState!.fields['Title Color']!.didChange(color);
+      titleColor = color.value;
     } else {
       context.read<UiController>().changeBodyColor(color);
-      _formKey.currentState!.fields['Body Color']!.didChange(color);
+      msgColor = color.value;
     }
   }
 
@@ -432,8 +460,8 @@ class SizeAndColors extends StatelessWidget {
     );
   }
 
-  RawMaterialButton customIconButton(
-      VoidCallback pressedAction, Color selectedColor) {
+  RawMaterialButton customIconButton(VoidCallback pressedAction,
+      Color selectedColor) {
     return RawMaterialButton(
       onPressed: pressedAction,
       fillColor: selectedColor,
@@ -442,7 +470,7 @@ class SizeAndColors extends StatelessWidget {
     );
   }
 
-  Text SimpleText(String title) {
+  Text simpleText(String title) {
     return Text(
       title,
       style: TextStyle(
@@ -452,7 +480,7 @@ class SizeAndColors extends StatelessWidget {
     );
   }
 
-  FormBuilderField ColorPickerField(String title, BuildContext context,
+  FormBuilderField colorPickerField(String title, BuildContext context,
       Color selectedColor, String selected, Color defaultColor) {
     return FormBuilderField(
       name: title,
@@ -461,7 +489,7 @@ class SizeAndColors extends StatelessWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SimpleText(title),
+            simpleText(title),
             SizedBox(
               width: 20.0,
             ),
@@ -485,8 +513,8 @@ class SizeAndColors extends StatelessWidget {
     );
   }
 
-  FormBuilderSlider CustomSlider(
-      String title, BuildContext context, change, value) {
+  FormBuilderSlider customSlider(String title, BuildContext context, change,
+      value) {
     return FormBuilderSlider(
       name: title,
       validator: FormBuilderValidators.compose([
@@ -495,7 +523,7 @@ class SizeAndColors extends StatelessWidget {
       onChanged: change,
       min: 5.0,
       max: 30.0,
-      initialValue: value,
+      initialValue: double.parse(value),
       divisions: 25,
       activeColor: colorPrimary,
       displayValues: DisplayValues.minMax,
@@ -507,8 +535,17 @@ class SizeAndColors extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ColorPickerField('Background Color', context,
-            context.watch<UiController>().bgColor, 'bgColor', Colors.white),
+        colorPickerField(
+          'Background Color',
+          context,
+          context
+              .watch<UiController>()
+              .bgColor,
+          'bgColor',
+          Color(MyApp.customDialogStructure == null
+              ? 0xFFFFFFFF
+              : int.parse(MyApp.customDialogStructure.bgColor.toString())),
+        ),
         SizedBox(
           height: 10.0,
         ),
@@ -516,12 +553,17 @@ class SizeAndColors extends StatelessWidget {
           height: 1.0,
           color: Colors.grey,
         ),
-        ColorPickerField(
-            'Title Color',
-            context,
-            context.watch<UiController>().titleColor,
-            'titleColor',
-            Colors.black),
+        colorPickerField(
+          'Title Color',
+          context,
+          context
+              .watch<UiController>()
+              .titleColor,
+          'titleColor',
+          Color(MyApp.customDialogStructure == null
+              ? 0xFFFFFFFF
+              : int.parse(MyApp.customDialogStructure.titleColor.toString())),
+        ),
         SizedBox(
           height: 10.0,
         ),
@@ -529,8 +571,17 @@ class SizeAndColors extends StatelessWidget {
           height: 1.0,
           color: Colors.grey,
         ),
-        ColorPickerField('Body Color', context,
-            context.watch<UiController>().bodyColor, 'bodyColor', Colors.black),
+        colorPickerField(
+          'Body Color',
+          context,
+          context
+              .watch<UiController>()
+              .msgColor,
+          'msgColor',
+          Color(MyApp.customDialogStructure == null
+              ? 0xFFFFFFFF
+              : int.parse(MyApp.customDialogStructure.msgColor.toString())),
+        ),
         SizedBox(
           height: 10.0,
         ),
@@ -556,7 +607,10 @@ class SizeAndColors extends StatelessWidget {
                   width: 10.0,
                 ),
                 Text(
-                  context.watch<UiController>().titleFontSize.toString(),
+                  context
+                      .watch<UiController>()
+                      .titleFontString
+                      .toString(),
                   style: TextStyle(
                     fontSize: 15.0,
                     fontWeight: FontWeight.bold,
@@ -565,9 +619,12 @@ class SizeAndColors extends StatelessWidget {
                 ),
               ],
             ),
-            CustomSlider('Title Font Size', context, (double? value) {
+            customSlider('titleFontString', context, (double? value) {
               context.read<UiController>().changeTitleFontSize(value!);
-            }, context.watch<UiController>().titleFontSize),
+            },
+                MyApp.customDialogStructure == null
+                    ? "20"
+                    : MyApp.customDialogStructure.titleFontString),
           ],
         ),
         SizedBox(
@@ -588,7 +645,10 @@ class SizeAndColors extends StatelessWidget {
                   width: 10.0,
                 ),
                 Text(
-                  context.watch<UiController>().bodyFontSize.toString(),
+                  context
+                      .watch<UiController>()
+                      .msgFontString
+                      .toString(),
                   style: TextStyle(
                     fontSize: 15.0,
                     fontWeight: FontWeight.bold,
@@ -597,9 +657,12 @@ class SizeAndColors extends StatelessWidget {
                 ),
               ],
             ),
-            CustomSlider('Body Font Size', context, (double? value) {
+            customSlider('msgFontString', context, (double? value) {
               context.read<UiController>().changeBodyFontSize(value!);
-            }, context.watch<UiController>().bodyFontSize),
+            },
+                MyApp.customDialogStructure == null
+                    ? "16"
+                    : MyApp.customDialogStructure.msgFontString),
           ],
         ),
       ],
@@ -607,14 +670,13 @@ class SizeAndColors extends StatelessWidget {
   }
 }
 
-
 //Image
 class ImagePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormBuilderImagePicker(
       iconColor: colorPrimary,
-      name: 'Image',
+      name: 'alertImageUrl',
       decoration: InputDecoration(
         labelText: 'Upload an Image',
         labelStyle: TextStyle(fontSize: 20.0, color: colorPrimary),
@@ -622,18 +684,17 @@ class ImagePicker extends StatelessWidget {
       maxImages: 1,
       onImage: (Image image) {
         context.read<UiController>().changeImage(image);
-        _formKey.currentState!.fields['Image']!.didChange(image);
+        AddParameters.formKey.currentState!.fields['Image']!.didChange(image);
       },
     );
   }
 }
 
 class ImageDisplayShape extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return FormBuilderChoiceChip(
-      name: 'Image Display Shape',
+      name: 'imageDisplayShape',
       initialValue: 'Circle',
       selectedColor: colorButton,
       decoration: InputDecoration(
@@ -643,8 +704,10 @@ class ImageDisplayShape extends StatelessWidget {
             color: colorPrimary,
           )),
       spacing: 20.0,
-      onSaved: (String? value) => _formKey.currentState!.fields['Image Display Shape']!.didChange(value!),
-
+      onSaved: (String? value) =>
+          AddParameters
+              .formKey.currentState!.fields['imageDisplayShape']!
+              .didChange(value!),
       options: [
         FormBuilderFieldOption(
           value: 'Circle',
@@ -673,8 +736,6 @@ class ImageDisplayShape extends StatelessWidget {
   }
 }
 
-
-
 //email, phone and url
 class ContactUs extends StatelessWidget {
   @override
@@ -682,7 +743,7 @@ class ContactUs extends StatelessWidget {
     return Column(
       children: [
         FormBuilderCheckbox(
-          name: 'Email Enabled',
+          name: 'emailAllowedString',
           title: Text(
             'Add Email us button',
             style: TextStyle(
@@ -691,16 +752,24 @@ class ContactUs extends StatelessWidget {
             ),
           ),
           activeColor: colorPrimary,
-          initialValue: context.watch<UiController>().emailCheck,
+          initialValue: context
+              .watch<UiController>()
+              .emailCheck,
           onChanged: (bool? value) {
             context.read<UiController>().changeEmailCheck(value);
           },
         ),
-        if (context.watch<UiController>().emailCheck)
+        if (context
+            .watch<UiController>()
+            .emailCheck)
           FormBuilderTextField(
-            name: 'Email',
+            name: 'email',
             cursorColor: colorPrimary,
-            decoration: CustomInputDecoration('Email', Icons.email),
+            initialValue:
+            MyApp.customDialogStructure.emailAllowedString == "true"
+                ? MyApp.customDialogStructure.email
+                : "",
+            decoration: customInputDecoration('Email', Icons.email),
             keyboardType: TextInputType.emailAddress,
             validator: FormBuilderValidators.compose([
               FormBuilderValidators.email(context,
@@ -708,7 +777,7 @@ class ContactUs extends StatelessWidget {
             ]),
           ),
         FormBuilderCheckbox(
-          name: 'Number Enabled',
+          name: 'phoneAllowedString',
           title: Text(
             'Add Call us button',
             style: TextStyle(
@@ -717,16 +786,24 @@ class ContactUs extends StatelessWidget {
             ),
           ),
           activeColor: colorPrimary,
-          initialValue: context.watch<UiController>().phoneCheck,
+          initialValue: context
+              .watch<UiController>()
+              .phoneCheck,
           onChanged: (bool? value) {
             context.read<UiController>().changePhoneCheck(value);
           },
         ),
-        if (context.watch<UiController>().phoneCheck)
+        if (context
+            .watch<UiController>()
+            .phoneCheck)
           FormBuilderTextField(
-            name: 'Number',
+            name: 'phoneNumber',
             cursorColor: colorPrimary,
-            decoration: CustomInputDecoration('+XX XXXXXXXXXX', Icons.phone),
+            initialValue:
+            MyApp.customDialogStructure.phoneAllowedString == "true"
+                ? MyApp.customDialogStructure.phoneNumber
+                : "",
+            decoration: customInputDecoration('+XX XXXXXXXXXX', Icons.phone),
             keyboardType: TextInputType.phone,
             validator: FormBuilderValidators.compose(
               [
@@ -738,7 +815,7 @@ class ContactUs extends StatelessWidget {
             ),
           ),
         FormBuilderCheckbox(
-          name: 'More Info Enabled',
+          name: 'linkAllowedString',
           title: Text(
             'Add More Information link',
             style: TextStyle(
@@ -747,16 +824,24 @@ class ContactUs extends StatelessWidget {
             ),
           ),
           activeColor: colorPrimary,
-          initialValue: context.watch<UiController>().moreInfoChecked,
+          initialValue: context
+              .watch<UiController>()
+              .moreInfoChecked,
           onChanged: (bool? value) {
             context.read<UiController>().changeMoreInfoCheck(value);
           },
         ),
-        if (context.watch<UiController>().moreInfoChecked)
+        if (context
+            .watch<UiController>()
+            .moreInfoChecked)
           FormBuilderTextField(
-            name: 'More Info',
+            name: 'link',
             cursorColor: colorPrimary,
-            decoration: CustomInputDecoration('Paste Website URL', Icons.insert_link),
+            initialValue: MyApp.customDialogStructure.linkAllowedString == "true"
+                ? MyApp.customDialogStructure.link
+                : "",
+            decoration:
+            customInputDecoration('Paste Website URL', Icons.insert_link),
             keyboardType: TextInputType.url,
             validator: FormBuilderValidators.compose([
               FormBuilderValidators.url(context,
@@ -768,22 +853,10 @@ class ContactUs extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
 //----------------------------------------------------------------------------------Just Some Random Code ------------------------------------------------------------------------------------------//
 // Separator('Font Size and Color', () {
 //   context.read<UiController>().changeShowSizeAndColor();
 // }, context.watch<UiController>().showSizeAndColor),
-
-
 
 // ElevatedButton Separator(String title, VoidCallback PressedAction, bool show) {
 //   return ElevatedButton(

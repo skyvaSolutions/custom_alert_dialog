@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:custom_dialog/controller/ui_controller.dart';
+import 'package:custom_dialog/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:custom_dialog/controller/form_content.dart';
@@ -22,9 +23,7 @@ String phoneNumber = '';
 IconData bulletIcon = Icons.circle;
 String imageDisplayShape = 'Circle';
 bool imageUploaded = false;
-String url ='';
-
-
+String url = '';
 
 class CustomDialog extends StatelessWidget {
   Future<void> _contact(String url) async {
@@ -35,112 +34,186 @@ class CustomDialog extends StatelessWidget {
     }
   }
 
-  void initializeValues(Map dialogMap , BuildContext context) {
-
+  void initializeValues(Map dialogMap, BuildContext context) {
 // Error and Null checking of all variables and then updating values each time dialog box is opened
-     title = '';
-     header = '';
-     bullets = '';
-     footer = '';
-     bgColor = Colors.white;
-     titleColor = Colors.black;
-     bodyColor = Colors.black;
-     titleFontSize = 20.0;
-     bodyFontSize = 18.0;
-     email = '';
-     phoneNumber = '';
-     bulletIcon = Icons.circle;
-     imageDisplayShape = 'Circle';
-     imageUploaded = false;
-     url ='';
+    title = '';
+    header = '';
+    bullets = '';
+    footer = '';
+    bgColor = Colors.white;
+    titleColor = Colors.black;
+    bodyColor = Colors.black;
+    titleFontSize = 20.0;
+    bodyFontSize = 18.0;
+    email = '';
+    phoneNumber = '';
+    bulletIcon = Icons.circle;
+    imageDisplayShape = 'Circle';
+    imageUploaded = false;
+    url = '';
 
+    // List iconList = [Icon(
+    //   Icons.circle,
+    //   color: colorPrimary,
+    //   size: 18.0,
+    // ),
+    //   Icon(
+    //     Icons.trip_origin,
+    //     color: colorPrimary,
+    //     size: 18.0,
+    //   ),
+    //   Icon(
+    //     Icons.format_list_numbered,
+    //     color: colorPrimary,
+    //   ),
+    //   Icon(
+    //     Icons.arrow_forward_ios,
+    //     color: colorPrimary,
+    //     size: 15.0,
+    //   ),
+    //   Icon(
+    //     Icons.star_outlined,
+    //     color: colorPrimary,
+    //     size: 20.0,
+    //   ),
+    //   Icon(
+    //     Icons.stop,
+    //     color: colorPrimary,
+    //     size: 22.0,
+    //   ),
+    //   Icon(
+    //     Icons.block,
+    //     color: colorPrimary,
+    //     size: 22.0,
+    //   ),];
 
-    title = dialogMap['Title'];
+    title = dialogMap['title'];
 
-    header = dialogMap['Header'];
+    header = dialogMap['headerText'];
 
-    if (dialogMap['Bullets'] != null) bullets = dialogMap['Bullets'];
+    print(
+        'wanted = ${dialogMap['centerBulletText']}, ${dialogMap['centerBulletText']}');
+    if (dialogMap['centerBulletText'] != null)
+      bullets = dialogMap['centerBulletText'];
 
-    footer = dialogMap['Footer'];
+    footer = dialogMap['footerText'];
 
-    if (dialogMap['Bullet Icon'] != null) bulletIcon = dialogMap['Bullet Icon'];
+    // if (dialogMap['bulletSymbol'] != null) bulletIcon = dialogMap['bulletSymbol'];
 
-    if (dialogMap.containsKey('Background Color') &&
-        dialogMap['Background Color'] != null)
-      bgColor = dialogMap['Background Color'];
+    if (dialogMap.containsKey('bgColor') && dialogMap['bgColor'] != null)
+      bgColor = dialogMap['bgColor'];
 
-    if (dialogMap.containsKey('Title Color') &&
-        dialogMap['Title Color'] != null) titleColor = dialogMap['Title Color'];
+    if (dialogMap.containsKey('titleColor') && dialogMap['titleColor'] != null)
+      titleColor = dialogMap['titleColor'];
 
-    if (dialogMap.containsKey('Body Color') && dialogMap['Body Color'] != null)
-      bodyColor = dialogMap['Body Color'];
+    if (dialogMap.containsKey('msgColor') && dialogMap['msgColor'] != null)
+      bodyColor = dialogMap['msgColor'];
 
-    if (dialogMap.containsKey('Title Font Size') &&
-        dialogMap['Title Font Size'] != null)
-      titleFontSize = dialogMap['Title Font Size'];
+    if (dialogMap.containsKey('titleFontString') &&
+        dialogMap['titleFontString'] != null)
+      titleFontSize = dialogMap['titleFontString'];
 
-    if (dialogMap.containsKey('Body Font Size') &&
-        dialogMap['Body Font Size'] != null)
-      bodyFontSize = dialogMap['Body Font Size'];
+    if (dialogMap.containsKey('msgFontString') &&
+        dialogMap['msgFontString'] != null)
+      bodyFontSize = dialogMap['msgFontString'];
 
-    if(context.watch<FormContent>().DialogObject.containsKey('Image') && context.watch<FormContent>().DialogObject['Image'] != null && context.watch<FormContent>().DialogObject['Image'].length  !=0)
+    if (context
+            .watch<FormContent>()
+            .dialogObject
+            .containsKey('alertImageUrl') &&
+        context.watch<FormContent>().dialogObject['alertImageUrl'] != null &&
+        context.watch<FormContent>().dialogObject['alertImageUrl'].length != 0)
       imageUploaded = true;
     else
       imageUploaded = false;
 
+    if (dialogMap.containsKey('imageDisplayShape') &&
+        dialogMap['imageDisplayShape'] != null)
+      imageDisplayShape = dialogMap['imageDisplayShape'];
 
-    if (dialogMap.containsKey('Image Display Shape') &&
-        dialogMap['Image Display Shape'] != null)
-      imageDisplayShape = dialogMap['Image Display Shape'];
+    if (context.watch<UiController>().emailCheck &&
+        dialogMap.containsKey('email') &&
+        dialogMap['email'] != null) email = dialogMap['email'];
 
-    if (context.watch<UiController>().emailCheck && dialogMap.containsKey('Email') && dialogMap['Email'] != null)
-      email = dialogMap['Email'];
+    if (context.watch<UiController>().phoneCheck &&
+        dialogMap.containsKey('phoneNumber') &&
+        dialogMap['phoneNumber'] != null)
+      phoneNumber = dialogMap['phoneNumber'];
 
-    if (context.watch<UiController>().phoneCheck && dialogMap.containsKey('Number') && dialogMap['Number'] != null)
-      phoneNumber = dialogMap['Number'];
-
-    if (context.watch<UiController>().moreInfoChecked &&  dialogMap.containsKey('More Info') && dialogMap['More Info'] != null)
-      url = dialogMap['More Info'];
+    if (context.watch<UiController>().moreInfoChecked &&
+        dialogMap.containsKey('linkAllowedString') &&
+        dialogMap['linkAllowedString'] != null) url = dialogMap['link'];
   }
 
   @override
   Widget build(BuildContext context) {
-    var dialogMap = context.watch<FormContent>().DialogObject;
+    var dialogMap = context.watch<FormContent>().dialogObject;
 
-    initializeValues(dialogMap , context);
+    initializeValues(dialogMap, context);
 
     List<Widget> bulletWidgets = [];
     List<String> bulletsSeparated = bullets.split('\n');
     int index = 1;
     for (var b in bulletsSeparated) {
-      bulletWidgets.add(
-        Row(children: [
-          if (bulletIcon == Icons.format_list_numbered)
-            Text(
-              index.toString() + ".",
-              style: TextStyle(fontSize: 20.0, color: bodyColor),
-            )
-
-          else if (bulletIcon != Icons.block)
-            Icon(
-              bulletIcon,
-              size: bodyFontSize,
-              color: bodyColor,
-            )
-          else
-            Text(''),
-          SizedBox(
-            width: 10.0,
-          ),
-          Text(
-            b,
-            style: TextStyle(
-              fontSize: bodyFontSize,
-              color: bodyColor,
-            ),
-          ),
-        ]),
-      );
+      bulletWidgets.add(ListTile(
+        leading: MyApp.customDialogStructure.bulletSymbol == null || MyApp.customDialogStructure.bulletSymbol == ""
+            ? (bulletIcon == Icons.format_list_numbered
+                ? Text(
+                    index.toString() + ".",
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 20.0, color: bodyColor),
+                  )
+                : bulletIcon != Icons.block
+                    ? Icon(
+                        bulletIcon,
+                        size: bodyFontSize,
+                        color: bodyColor,
+                      )
+                    : Text(
+                        '',
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                      ))
+            : MyApp.customDialogStructure.bulletSymbol,
+        title: Text(b),
+        dense: true,
+      ));
+      // bulletWidgets.add(
+      //   Row(children: [
+      //     if (bulletIcon == Icons.format_list_numbered)
+      //       Text(
+      //         index.toString() + ".",
+      //         softWrap: true,
+      //         overflow: TextOverflow.ellipsis,
+      //         style: TextStyle(fontSize: 20.0, color: bodyColor),
+      //       )
+      //     else if (bulletIcon != Icons.block)
+      //       Icon(
+      //         bulletIcon,
+      //         size: bodyFontSize,
+      //         color: bodyColor,
+      //       )
+      //     else
+      //       Text(
+      //         '',
+      //         softWrap: true,
+      //         overflow: TextOverflow.ellipsis,
+      //       ),
+      //     SizedBox(
+      //       width: 10.0,
+      //     ),
+      //     Text(
+      //       b,
+      //       softWrap: true,
+      //       overflow: TextOverflow.ellipsis,
+      //       style: TextStyle(
+      //         fontSize: bodyFontSize,
+      //         color: bodyColor,
+      //       ),
+      //     ),
+      //   ]),
+      // );
       index++;
     }
 
@@ -178,7 +251,7 @@ class CustomDialog extends StatelessWidget {
                         image: FileImage(
                           File(context
                               .watch<FormContent>()
-                              .DialogObject['Image'][0]
+                              .dialogObject['alertImageUrl'][0]
                               .path),
                         ),
                         fit: BoxFit.fitWidth,
@@ -198,7 +271,7 @@ class CustomDialog extends StatelessWidget {
                         image: FileImage(
                           File(context
                               .watch<FormContent>()
-                              .DialogObject['Image'][0]
+                              .dialogObject['alertImageUrl'][0]
                               .path),
                         ),
                         fit: BoxFit.fitWidth,
@@ -215,14 +288,16 @@ class CustomDialog extends StatelessWidget {
                       SizedBox(
                         height: 10.0,
                       ),
-                      if(imageUploaded)
-                        if(imageDisplayShape == 'Circle')
+                      if (imageUploaded)
+                        if (imageDisplayShape == 'Circle')
                           SizedBox(
                             height: 30.0,
                           ),
                       Center(
                         child: Text(
                           title,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontSize: titleFontSize,
                               fontWeight: FontWeight.bold,
@@ -234,6 +309,8 @@ class CustomDialog extends StatelessWidget {
                       ),
                       Text(
                         header,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: bodyFontSize,
                           color: bodyColor,
@@ -251,6 +328,8 @@ class CustomDialog extends StatelessWidget {
                       ),
                       Text(
                         footer,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: bodyFontSize,
                           color: bodyColor,
@@ -280,6 +359,7 @@ class CustomDialog extends StatelessWidget {
                                   ),
                                   Text(
                                     'Email Us',
+                                    softWrap: true,
                                     style: TextStyle(
                                       fontSize: bodyFontSize,
                                       color: bodyColor,
@@ -306,6 +386,7 @@ class CustomDialog extends StatelessWidget {
                                   ),
                                   Text(
                                     'Call Us',
+                                    softWrap: true,
                                     style: TextStyle(
                                       fontSize: bodyFontSize,
                                       color: bodyColor,
@@ -316,32 +397,33 @@ class CustomDialog extends StatelessWidget {
                             ),
                         ],
                       ),
-                        if (url != '')
-                          TextButton(
-                            onPressed: () {
-                              _contact('https:$url');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.open_in_browser,
-                                  size: 20.0,
+                      if (url != '')
+                        TextButton(
+                          onPressed: () {
+                            _contact('https:$url');
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.open_in_browser,
+                                size: 20.0,
+                                color: bodyColor,
+                              ),
+                              SizedBox(
+                                width: 10.0,
+                              ),
+                              Text(
+                                'Visit website',
+                                softWrap: true,
+                                style: TextStyle(
+                                  fontSize: bodyFontSize,
                                   color: bodyColor,
                                 ),
-                                SizedBox(
-                                  width: 10.0,
-                                ),
-                                Text(
-                                  'Visit website',
-                                  style: TextStyle(
-                                    fontSize: bodyFontSize,
-                                    color: bodyColor,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                        ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
